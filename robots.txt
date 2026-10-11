@@ -1,0 +1,4 @@
+# Unofficial design preview. Not the live Napa Valley Fly Guides website.
+# Please do not index: the production site is https://www.napavalleyflyguides.com/
+User-agent: *
+Disallow: /
