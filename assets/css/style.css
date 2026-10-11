@@ -70,6 +70,9 @@
   --ease-out: cubic-bezier(.16, 1, .3, 1);
 
   --header-h: 78px;
+  --ribbon-h: 38px;
+  /* total distance from the top of the viewport to the bottom of the header */
+  --top: calc(var(--ribbon-h) + var(--header-h));
 }
 
 /* --------------------------------------------------------- 01. RESET & BASE */
@@ -78,7 +81,7 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-  scroll-padding-top: calc(var(--header-h) + 16px);
+  scroll-padding-top: calc(var(--top) + 16px);
 }
 
 body {
@@ -262,10 +265,73 @@ p:last-child { margin-bottom: 0; }
 .on-ink .tlink { color: var(--brass); }
 .on-ink .tlink:hover { color: var(--on-ink); }
 
+/* --------------------------------------------------- 03b. PREVIEW RIBBON */
+/* Sits above everything, permanently. Its only job is to stop Richard reading this
+   mock-up as his live site. Deliberately NOT dismissible — a close button defeats
+   the entire purpose. Remove this block, the .preview-ribbon markup and the
+   --ribbon-h token (plus reset --top) to take the site back to a clean build.
+   See HANDOFF.md § Removing the preview ribbon. */
+.preview-ribbon {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 150;                    /* above the header (140) and the drawer (120) */
+  height: var(--ribbon-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--river-deep);
+  color: var(--brass-soft);
+  border-bottom: 1px solid rgba(190, 138, 78, .28);
+  text-align: center;
+  padding-inline: var(--gutter);
+  font-size: .68rem;
+  line-height: 1.25;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  font-weight: 500;
+  overflow: hidden;
+}
+.preview-ribbon p {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.preview-ribbon__dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--brass);
+  flex: none;
+  box-shadow: 0 0 0 3px rgba(190, 138, 78, .18);
+}
+.preview-ribbon strong {
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: .1em;
+}
+.preview-ribbon__none {
+  opacity: .55;
+  font-weight: 300;
+}
+.preview-ribbon a {
+  color: var(--brass);
+  border-bottom: 1px solid rgba(190, 138, 78, .5);
+  padding-bottom: 1px;
+  transition: color .25s var(--ease), border-color .25s var(--ease);
+}
+.preview-ribbon a:hover { color: #fff; border-bottom-color: #fff; }
+
+/* narrow screens get a shorter sentence so it stays on one line */
+.preview-ribbon__long { display: inline; }
+.preview-ribbon__short { display: none; }
+
 /* --------------------------------------------------------- 04. HEADER & NAV */
 .site-header {
   position: fixed;
-  inset: 0 0 auto 0;
+  inset: var(--ribbon-h) 0 auto 0;
   z-index: 140;
   height: var(--header-h);
   display: flex;
@@ -429,7 +495,7 @@ body.nav-open .burger { color: var(--on-ink); }
   z-index: 120;
   background: var(--ink);
   color: var(--on-ink);
-  padding: calc(var(--header-h) + 2rem) var(--gutter) 2.5rem;
+  padding: calc(var(--top) + 2rem) var(--gutter) 2.5rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -507,7 +573,7 @@ body.nav-open .burger { color: var(--on-ink); }
 .hero__inner {
   width: 100%;
   padding-bottom: clamp(2.5rem, 5.5vw, 5rem);
-  padding-top: calc(var(--header-h) + 4rem);
+  padding-top: calc(var(--top) + 4rem);
 }
 .hero__content { max-width: 61ch; }
 
@@ -1030,7 +1096,7 @@ body.nav-open .burger { color: var(--on-ink); }
   position: relative;
   background: var(--ink);
   color: var(--on-ink);
-  padding-top: calc(var(--header-h) + clamp(3rem, 8vw, 6rem));
+  padding-top: calc(var(--top) + clamp(3rem, 8vw, 6rem));
   padding-bottom: clamp(3rem, 7vw, 5.5rem);
   overflow: hidden;
   isolation: isolate;
@@ -1119,7 +1185,11 @@ body.nav-open .burger { color: var(--on-ink); }
 }
 
 @media (max-width: 980px) {
-  :root { --header-h: 68px; }
+  :root { --header-h: 68px; --ribbon-h: 34px; }
+  .preview-ribbon { font-size: .6rem; letter-spacing: .05em; }
+  .preview-ribbon__long { display: none; }
+  .preview-ribbon__short { display: inline; }
+  .preview-ribbon p { gap: .45rem; }
   .nav__list, .nav__meta { display: none; }
   .burger { display: block; }
   .brand__mark { width: 38px; height: 39px; }
@@ -1146,6 +1216,14 @@ body.nav-open .burger { color: var(--on-ink); }
   .hero__scroll { display: none; }
 }
 
+/* very narrow phones (≤359px): the short sentence needs 311px, so let it wrap to two
+   lines instead of ellipsising — cutting off "the live site" would defeat the point */
+@media (max-width: 359px) {
+  :root { --ribbon-h: 46px; }
+  .preview-ribbon { font-size: .56rem; letter-spacing: .03em; }
+  .preview-ribbon p { white-space: normal; line-height: 1.3; }
+}
+
 @media (max-width: 620px) {
   body { font-size: 1rem; }
   .film-row { grid-template-columns: 1fr; }
@@ -1166,7 +1244,7 @@ body.nav-open .burger { color: var(--on-ink); }
 
 /* ------------------------------------------------------------- 11. PRINT */
 @media print {
-  .site-header, .drawer, .burger, .hero__scroll, .lightbox, .next-page { display: none !important; }
+  .site-header, .preview-ribbon, .drawer, .burger, .hero__scroll, .lightbox, .next-page { display: none !important; }
   body { background: #fff; color: #000; }
   .js .reveal { opacity: 1 !important; transform: none !important; }
   .section, .cta-band__inner { padding-block: 1.5rem; }
