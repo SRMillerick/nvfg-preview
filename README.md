@@ -38,9 +38,11 @@ that the pictures carry the page.
   self-hosted as `woff2` so there are no third-party font requests.
 - **Palette** — river slate, warm bone paper, tailwater teal, and a single brass accent
   reserved for calls to action.
-- **Photography** — cropped and re-encoded from the existing site. Camera date stamps
-  were removed by inpainting rather than cropped around, so no frame is composed worse
-  than it needs to be.
+- **Photography** — cropped and re-encoded from the existing site, at several widths per
+  image so a phone is not sent a 2000 px banner (homepage imagery is roughly half the
+  weight it was). Several of the source photographs have the camera's date burned into the
+  bottom-right; where the removal left visible smearing, the stamped strip was cropped away
+  instead, so nothing is covered up by a smudge.
 - **Motion** — minimal, and disabled automatically for visitors who ask for reduced motion.
 
 ## Notes
